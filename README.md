@@ -2,6 +2,24 @@
 
 A full-stack application that fetches articles, enhances them using AI (OpenRouter/GPT-based models), and displays both original and enhanced versions with source citations.
 
+## 📸 Screenshots
+
+### Article Hub - Home Page
+Shows the main interface with side-by-side comparison of original and enhanced articles:
+![Article Hub Home](public/screenshots/screenshot-1.png)
+
+### Original vs Enhanced Articles
+Displays multiple articles with original content on the left and AI-enhanced versions with sources on the right:
+![Original vs Enhanced](public/screenshots/screenshot-2.png)
+
+### Enhanced Content with Sources
+Shows enhanced article content with real source citations:
+![Enhanced with Sources](public/screenshots/screenshot-3.png)
+
+### More Articles Example
+Additional examples of article enhancement:
+![More Examples](public/screenshots/screenshot-4.png)
+
 ## 🏗️ Architecture Overview
 
 ```
@@ -222,13 +240,13 @@ beyond-chats-assignment/
 
 ## 🎯 Features
 
--  **Original Articles**: Store and display original articles
--  **AI Enhancement**: Automatically enhance articles using OpenRouter API
--  **Source Citations**: Include real source URLs for enhanced content
--  **Side-by-Side Comparison**: View original and enhanced versions simultaneously
--  **RESTful API**: Full CRUD operations on articles
--  **Responsive Design**: Works on desktop and mobile devices
--  **Real-time Updates**: Enhanced articles appear automatically
+- ✅ **Original Articles**: Store and display original articles
+- ✅ **AI Enhancement**: Automatically enhance articles using OpenRouter API
+- ✅ **Source Citations**: Include real source URLs for enhanced content
+- ✅ **Side-by-Side Comparison**: View original and enhanced versions simultaneously
+- ✅ **RESTful API**: Full CRUD operations on articles
+- ✅ **Responsive Design**: Works on desktop and mobile devices
+- ✅ **Real-time Updates**: Enhanced articles appear automatically
 
 ## 🔐 Security Notes
 
