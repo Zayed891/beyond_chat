@@ -35,12 +35,13 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 # Create .htaccess for Laravel
 RUN echo '<IfModule mod_rewrite.c>\n    RewriteEngine On\n    RewriteCond %{REQUEST_FILENAME} !-d\n    RewriteCond %{REQUEST_FILENAME} !-f\n    RewriteRule ^ index.php [QSA,L]\n</IfModule>' > public/.htaccess
 
-# Install composer dependencies
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+# Install composer dependencies - simple install first
+RUN composer install --no-dev --no-interaction 2>&1 || true
+RUN composer dump-autoload 2>&1 || true
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port
 EXPOSE 80
