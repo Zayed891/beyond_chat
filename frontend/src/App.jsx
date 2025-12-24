@@ -13,7 +13,8 @@ function App() {
   const fetchArticles = async () => {
     try {
       setLoading(true)
-      const response = await axios.get('http://127.0.0.1:8000/api/articles')
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
+      const response = await axios.get(`${apiUrl}/articles`)
       setArticles(response.data)
     } catch (err) {
       setError('Failed to fetch articles. Make sure Laravel is running.')
