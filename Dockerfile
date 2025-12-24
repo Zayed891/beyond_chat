@@ -2,11 +2,20 @@ FROM composer:2.7 AS builder
 
 WORKDIR /app
 
+# Set composer environment variables
+ENV COMPOSER_MEMORY_LIMIT=-1
+ENV COMPOSER_PROCESS_TIMEOUT=2000
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 # Copy backend files
 COPY backend/composer.json backend/composer.lock ./
 
-# Install dependencies
-RUN composer install --no-dev --no-interaction --prefer-dist 2>&1
+# Install dependencies - verbose to see errors
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-scripts \
+    -vvv 2>&1 | tail -100
 
 # Final stage
 FROM php:8.2-apache
