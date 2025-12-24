@@ -3,18 +3,35 @@ FROM php:8.2-fpm
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
+    wget \
+    git \
+    zip \
+    unzip \
     libpq-dev \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    zip \
-    unzip \
-    git \
+    libcurl4-openssl-dev \
+    pkg-config \
     nginx \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    curl \
+    json \
+    ctype
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set working directory
 WORKDIR /var/www/html
@@ -22,9 +39,8 @@ WORKDIR /var/www/html
 # Copy composer files from backend
 COPY backend/composer.json backend/composer.lock ./
 
-# Install composer dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --no-dev --no-interaction --prefer-dist
+# Install composer dependencies with verbose output
+RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts 2>&1
 
 # Copy entire backend application
 COPY backend/ .
