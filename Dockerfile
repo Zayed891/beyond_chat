@@ -30,8 +30,8 @@ WORKDIR /var/www/html
 # Copy entire backend application first
 COPY backend/ .
 
-# Install composer dependencies
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+# Install composer dependencies with verbose output
+RUN composer install --no-dev --no-interaction --prefer-dist -vvv 2>&1 | tail -50
 
 # Copy entire backend application
 COPY backend/ .
