@@ -11,33 +11,27 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    libcurl4-openssl-dev \
-    pkg-config \
     nginx \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
-RUN docker-php-ext-install \
-    pdo \
-    pdo_pgsql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Increase PHP memory limit for composer
+ENV COMPOSER_MEMORY_LIMIT=2G
+
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files from backend
-COPY backend/composer.json backend/composer.lock ./
+# Copy entire backend application first
+COPY backend/ .
 
-# Install composer dependencies with verbose output
-RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts 2>&1
+# Install composer dependencies
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 # Copy entire backend application
 COPY backend/ .
