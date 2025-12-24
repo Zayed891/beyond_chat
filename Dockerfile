@@ -22,6 +22,7 @@ RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 ENV COMPOSER_MEMORY_LIMIT=-1
+ENV COMPOSER_PROCESS_TIMEOUT=2000
 
 # Set working directory
 WORKDIR /var/www/html
@@ -29,19 +30,22 @@ WORKDIR /var/www/html
 # Copy entire backend application
 COPY backend/ .
 
+# Try composer install with verbose output and explicit error checking
+RUN set -e && \
+    echo "Starting composer install..." && \
+    composer install --no-dev -vv 2>&1 && \
+    echo "Composer install completed successfully" && \
+    ls -la vendor/ 2>/dev/null || echo "WARNING: vendor directory missing"
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 # Set correct Apache document root
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 # Create .htaccess for Laravel
 RUN echo '<IfModule mod_rewrite.c>\n    RewriteEngine On\n    RewriteCond %{REQUEST_FILENAME} !-d\n    RewriteCond %{REQUEST_FILENAME} !-f\n    RewriteRule ^ index.php [QSA,L]\n</IfModule>' > public/.htaccess
-
-# Install composer dependencies - simple install first
-RUN composer install --no-dev --no-interaction 2>&1 || true
-RUN composer dump-autoload 2>&1 || true
-
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port
 EXPOSE 80
